@@ -27,20 +27,30 @@ def alignment(src_img, src_pts):
 
 def cropping(src_img ):
     # IMPLEMENT cropping the center of image
-    new_width = 96
-    new_height = 112
+#     new_width = 96
+#     new_height = 112
 
-    width, height = src_img.size
+#     width, height = src_img.size
 
-    left = (width - new_width)/2
-    top = (height - new_height)/2
-    right = (width + new_width)/2
-    bottom = (height + new_height)/2
+#     left = (width - new_width)/2
+#     top = (height - new_height)/2
+#     right = (width + new_width)/2
+#     bottom = (height + new_height)/2
 
-    # Crop the center of the image
-    src_img = src_img.crop((left, top, right, bottom))
+#     # Crop the center of the image
+#     src_img = src_img.crop((left, top, right, bottom))
+#     src_img = np.asarray(src_img )[:, :, ::-1]
+
+
+#     return src_img
+
+    crop_size = (96, 112 )
     src_img = np.asarray(src_img )[:, :, ::-1]
+    h, w = src_img.shape[0], src_img.shape[1]
 
+    rs = int( (h - crop_size[1] ) / 2.0 )
+    cs = int( (w - crop_size[0] ) / 2.0 )
+    src_img = src_img[rs:rs + crop_size[1], cs:cs+crop_size[0], :]
 
     return src_img
 

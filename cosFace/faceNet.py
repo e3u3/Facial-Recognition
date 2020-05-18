@@ -4,6 +4,7 @@ from torch.autograd import Variable
 import torch.nn.functional as F
 from torch.nn import Parameter
 import numpy as np
+import math
 
 
 class CustomLinear(nn.Module):
@@ -28,6 +29,10 @@ class CustomLinear(nn.Module):
         cos_theta = cos_theta.clamp(-1,1)
 
         # IMPLEMENT phi_theta
+        phi_theta = cos_theta - self.m
+        
+        cos_theta = cos_theta * xlen.view(-1,1)
+        phi_theta = phi_theta * xlen.view(-1,1)
 
         output = (cos_theta,phi_theta)
         return output
@@ -43,6 +48,14 @@ class CustomLoss(nn.Module):
         target = target.view(-1,1) #size=(B,1)
 
         # IMPLEMENT loss
+        #Highkey stolen from https://github.com/cvqluu/Angular-Penalty-Softmax-Losses-Pytorch/blob/master/loss_functions.py
+        numerator = torch.exp(self.s * phi_theta)        
+      
+        full_excl = torch.sum(torch.exp(self.s * cos_theta)) - torch.exp(self.s * cos_theta)            
+        denominator = numerator + excl
+        
+        loss = torch.mean((numerator / denominator ).log()* -1)
+        
 
         _, predictedLabel = torch.max(cos_theta.data, 1)
         predictedLabel = predictedLabel.view(-1, 1)
