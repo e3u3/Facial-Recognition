@@ -50,20 +50,16 @@ class CustomLoss(nn.Module):
 
         # IMPLEMENT loss
         
-        #inner sum
-        inner_sum = cos_theta.clone().detach()
-        for row_idx, row in enumerate(inner_sum):
-            row[target[row_idx]] = 0
-        inner_sum = torch.sum(torch.exp(self.s * inner_sum))
-
         #numerator
-        numerator = torch.exp(self.s * phi_theta[range(phi_theta.size(0)), target[:,0]])        
+        numerator = torch.exp(self.s * phi_theta[torch.arange(phi_theta.size(0)), target[:,0]])        
 
         #denominator
-        denominator = numerator + excl
+        denominator = torch.exp(self.s * cos_theta)
+        denominator = denominator.sum(dim=1) - denominator[torch.arange(denominator.size(0)), target[:,0]]
+        denominator = denominator + numerator
         
         #loss
-        loss = torch.mean(torch.log(numerator / denominator )* -1)
+        loss = torch.mean(torch.log(numerator / denominator )).neg()
         
 
         _, predictedLabel = torch.max(cos_theta.data, 1)

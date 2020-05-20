@@ -112,6 +112,7 @@ for epoch in range(0, opt.nepoch ):
                 param_group['lr'] /= 10
 
         if iteration == opt.iterationEnd:
+            print('%s/loss.npy' % opt.experiment)
             np.save('%s/loss.npy' % opt.experiment, np.array(lossArr ) )
             np.save('%s/accuracy.npy' % opt.experiment, np.array(accuracyArr ) )
             torch.save(net.state_dict(), '%s/netFinal_%d.pth' % (opt.experiment, epoch+1) )
@@ -122,7 +123,7 @@ for epoch in range(0, opt.nepoch ):
     if iteration >= opt.iterationEnd:
         break
 
-    if (epoch+1) % 2 == 0:
+    if (iteration) % 500 == 0:
         np.save('%s/loss.npy' % opt.experiment, np.array(lossArr ) )
         np.save('%s/accuracy.npy' % opt.experiment, np.array(accuracyArr ) )
         torch.save(net.state_dict(), '%s/net_%d.pth' % (opt.experiment, epoch+1) )
