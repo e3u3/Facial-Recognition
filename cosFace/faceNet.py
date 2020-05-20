@@ -60,7 +60,7 @@ class CustomLoss(nn.Module):
         numerator = torch.exp(self.s * phi_theta[range(phi_theta.size(0)), target[:,0]])        
 
         #denominator
-        denominator = numerator + excl
+        denominator = numerator + inner_sum
         
         #loss
         loss = torch.mean(torch.log(numerator / denominator )* -1)
