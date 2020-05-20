@@ -11,6 +11,8 @@ import torch.nn as nn
 import os
 import numpy as np
 
+from tensorboardX import SummaryWriter
+from datetime import date
 
 parser = argparse.ArgumentParser()
 # The locationi of training set
@@ -40,8 +42,14 @@ os.system('cp *.py %s' % opt.experiment )
 if torch.cuda.is_available() and opt.noCuda:
     print("WARNING: You have a CUDA device, so you should probably run with --cuda")
 
+today = date.today()
+
+# dd/mm/YY
+d1 = today.strftime("%d_%m_%Y")
+writer = SummaryWriter(f'casia_train_summary_CosFace_{d1}', flush_secs=1)
+
 # Initialize network
-net = faceNet.faceNet(m = opt.marginFactor, feature = False )
+net = faceNet.faceNet_BN(m = opt.marginFactor, feature = False )
 lossLayer = faceNet.CustomLoss(s = opt.scaleFactor )
 
 # Move network and containers to gpu
@@ -88,8 +96,13 @@ for epoch in range(0, opt.nepoch ):
         optimizer.step()
 
         # Output the log information
-        lossArr.append(loss.cpu().data.item() )
+        loss_item = loss.cpu().data.item() 
+        lossArr.append(loss_item )
         accuracyArr.append(accuracy )
+        
+        writer.add_scalar('loss_train/loss', loss_item, iteration)
+        writer.add_scalar('loss_train/accuracy', accuracy, iteration)
+        writer.flush()
 
         if iteration >= 1000:
             meanLoss = np.mean(np.array(lossArr[-1000:] ) )

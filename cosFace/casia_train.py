@@ -45,7 +45,7 @@ if torch.cuda.is_available() and opt.noCuda:
 today = date.today()
 
 # dd/mm/YY
-d1 = today.strftime("%d_%m_%Y")
+d1 = today.strftime("%d_%m_%Y_%H_%M_%S")
 writer = SummaryWriter(f'casia_train_summary_CosFace_{d1}', flush_secs=1)
 
 # Initialize network
@@ -96,7 +96,8 @@ for epoch in range(0, opt.nepoch ):
         optimizer.step()
 
         # Output the log information
-        lossArr.append(loss.cpu().data.item() )
+        loss_item = loss.cpu().data.item() 
+        lossArr.append(loss_item )
         accuracyArr.append(accuracy )
         
         writer.add_scalar('loss_train/loss', loss_item, iteration)

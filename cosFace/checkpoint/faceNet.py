@@ -160,7 +160,7 @@ class faceNet(nn.Module):
 
 class faceNet_BN(nn.Module):
     def __init__(self,classnum=10574, feature=False, m = 1.35):
-        super(faceNet, self).__init__()
+        super(faceNet_BN, self).__init__()
         self.classnum = classnum
         self.feature = feature
 
