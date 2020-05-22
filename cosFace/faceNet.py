@@ -247,6 +247,8 @@ class faceNet_BN(nn.Module):
         self.relu4_3 = nn.PReLU(512)
 
         self.fc5 = nn.Linear(512*7*6,512)
+        self.fc5_bn = nn.BatchNorm1d(512)
+        
         self.fc6 = CustomLinear(in_features = 512,
                 out_features = self.classnum, m=m)
 
@@ -277,6 +279,7 @@ class faceNet_BN(nn.Module):
 
         if self.feature:
             return x
+        x = self.fc5_bn(x)
 
         x = self.fc6(x)
         return x

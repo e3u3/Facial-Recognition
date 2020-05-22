@@ -12,7 +12,7 @@ import os
 import numpy as np
 
 from tensorboardX import SummaryWriter
-from datetime import date
+import datetime
 
 parser = argparse.ArgumentParser()
 # The locationi of training set
@@ -42,14 +42,16 @@ os.system('cp *.py %s' % opt.experiment )
 if torch.cuda.is_available() and opt.noCuda:
     print("WARNING: You have a CUDA device, so you should probably run with --cuda")
 
-today = date.today()
+checkpoint_file = '%s/net_4.pth' % (opt.experiment)
 
 # dd/mm/YY
-d1 = today.strftime("%d_%m_%Y")
-writer = SummaryWriter(f'casia_train_summary_CosFace_{d1}', flush_secs=1)
+writer = SummaryWriter(f'casia_train_summary_CosFace_{datetime.datetime.now().strftime("%Y%m%d-%H%M%S")}', flush_secs=1)
 
 # Initialize network
 net = faceNet.faceNet_BN(m = opt.marginFactor, feature = False )
+if os.path.isfile(checkpoint_file):
+    state_dict = torch.load('%s/net_4.pth' % (opt.experiment))
+    net.load_state_dict(state_dict)
 lossLayer = faceNet.CustomLoss(s = opt.scaleFactor )
 
 # Move network and containers to gpu
@@ -136,7 +138,6 @@ for epoch in range(0, opt.nepoch ):
     if iteration >= opt.iterationEnd:
         break
 
-    if (iteration) % 500 == 0:
-        np.save('%s/loss.npy' % opt.experiment, np.array(lossArr ) )
-        np.save('%s/accuracy.npy' % opt.experiment, np.array(accuracyArr ) )
-        torch.save(net.state_dict(), '%s/net_%d.pth' % (opt.experiment, epoch+1) )
+    np.save('%s/loss.npy' % opt.experiment, np.array(lossArr ) )
+    np.save('%s/accuracy.npy' % opt.experiment, np.array(accuracyArr ) )
+    torch.save(net.state_dict(), '%s/net_%d.pth' % (opt.experiment, epoch+1) )
