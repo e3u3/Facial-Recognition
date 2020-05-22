@@ -49,9 +49,9 @@ writer = SummaryWriter(f'casia_train_summary_CosFace_{datetime.datetime.now().st
 
 # Initialize network
 net = faceNet.faceNet_BN(m = opt.marginFactor, feature = False )
-if os.path.isfile(checkpoint_file):
-    state_dict = torch.load('%s/net_5.pth' % (opt.experiment))
-    net.load_state_dict(state_dict)
+# if os.path.isfile(checkpoint_file):
+#     state_dict = torch.load('%s/net_5.pth' % (opt.experiment))
+#     net.load_state_dict(state_dict)
 lossLayer = faceNet.CustomLoss(s = opt.scaleFactor )
 
 # Move network and containers to gpu
