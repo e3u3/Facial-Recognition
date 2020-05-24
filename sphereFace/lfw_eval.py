@@ -27,6 +27,7 @@ def alignment(src_img, src_pts):
 
 def cropping(src_img ):
     # IMPLEMENT cropping the center of image
+    #THIS IS MINE, the one below is the one that I found 
 #     new_width = 96
 #     new_height = 112
 
