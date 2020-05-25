@@ -1,10 +1,12 @@
 import glob
 import numpy as np
 import os.path as osp
+import os
 from PIL import Image
 import random
 from torch.utils.data import Dataset
 from matlab_cp2tform import get_similarity_transform_for_PIL
+import code
 
 class BatchLoader(Dataset ):
     def __init__(self, imageRoot = '../CASIA-WebFace/',
@@ -12,6 +14,12 @@ class BatchLoader(Dataset ):
         super(BatchLoader, self).__init__()
 
         self.imageRoot = imageRoot
+        
+        #my additions
+        self.subjects = []
+        for idx in os.listdir(self.imageRoot):
+            self.subjects.append(idx)
+    
         self.alignmentRoot = alignmentRoot
         self.cropSize = cropSize
         refLandmark = [ [30.2946, 51.6963],[65.5318, 51.5014],
@@ -20,10 +28,19 @@ class BatchLoader(Dataset ):
 
         with open(alignmentRoot, 'r') as labelIn:
             labels = labelIn.readlines()
+            
+            
 
         self.imgNames, self.targets, self.landmarks = [], [], []
         for x in labels:
             xParts = x.split('\t')
+            
+            #my additions
+            current_subject_id = xParts[0].split('/')[0]
+
+            if current_subject_id not in self.subjects:
+                continue
+            
             self.imgNames.append(osp.join(self.imageRoot, xParts[0] ) )
             self.targets.append(int(xParts[1] ) )
             landmark = []
@@ -31,6 +48,7 @@ class BatchLoader(Dataset ):
                 landmark.append(float(xParts[n+2] ) )
             landmark = np.array(landmark, dtype=np.float32 )
             self.landmarks.append(landmark.reshape(5, 2) )
+
 
         self.count = len(self.imgNames )
         self.perm = list(range(self.count ) )

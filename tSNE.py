@@ -11,7 +11,7 @@ import code
 
 
 landMarkFile = './cosFace/data/casia_landmark.txt'
-model_path = '/datasets/home/96/396/jbk001/cse152b_hw2-release/cosFace/checkpoint_bn/checkpoint/netFinal_8.pth'
+model_path = '/datasets/home/96/396/jbk001/cse152b_hw2release/cosFace/checkpoint_bn/checkpoint/netFinal_8.pth'
 dataset_location = '/datasets/cse152-252-sp20-public/hw2_data/CASIA-WebFace'
 
 def alignment(img, landmark ):
